@@ -51,9 +51,9 @@ public class FileBrowserEventListenerProvider implements EventListenerProvider {
         FileBrowserUser user = fileBrowserService.getUserByName(username);
         if (user == null) {
             fileBrowserService.createUser(username);
-            LOG.infov("Success create user {} in filebrowser", username);
+            LOG.infov("Success create user {0} in filebrowser", username);
         } else {
-            LOG.warnv("User {} exist!", username);
+            LOG.warnv("User {0} exist!", username);
         }
     }
 
