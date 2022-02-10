@@ -23,7 +23,7 @@ public interface FileBrowserService {
 
 class HttpFileBrowserService implements FileBrowserService {
 
-    private static final String WELLSPIKING_TRAINING = "/wellspiking-training/";
+    static final String WELLSPIKING_TRAINING = "wellspiking-training/";
     private static final String X_AUTH = "x-auth";
     private static final String X_AUTH_REQUEST_PREFERRED_USERNAME = "X-Auth-Request-Preferred-Username";
     private static final String USER_PATH = "/api/users";
@@ -150,11 +150,11 @@ class FileBrowserUser {
     String username;
     String password;
     String scope;
-    String locale;
+    String locale = "zh-cn";
     boolean lockPassword;
     String viewMode;
     boolean singleClick;
-    Permissions perm;
+    Permissions perm = new Permissions();
     String[] commands;
     Sorting sorting;
     Rule[] rules;
