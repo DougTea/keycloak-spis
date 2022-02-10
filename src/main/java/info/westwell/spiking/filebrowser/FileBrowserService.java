@@ -23,6 +23,7 @@ public interface FileBrowserService {
 
 class HttpFileBrowserService implements FileBrowserService {
 
+    private static final String WELLSPIKING_TRAINING = "/wellspiking-training/";
     private static final String X_AUTH = "x-auth";
     private static final String X_AUTH_REQUEST_PREFERRED_USERNAME = "X-Auth-Request-Preferred-Username";
     private static final String USER_PATH = "/api/users";
@@ -64,11 +65,13 @@ class HttpFileBrowserService implements FileBrowserService {
 
     @Override
     public void createUser(String username) {
+        CreateUserPlayload playload = new CreateUserPlayload(username);
+        playload.getData().setScope(WELLSPIKING_TRAINING.concat(username));
         ObjectMapper objectMapper = new ObjectMapper();
         String bodyStr;
         try {
             bodyStr = objectMapper.writerWithDefaultPrettyPrinter()
-                    .writeValueAsString(new CreateUserPlayload(username));
+                    .writeValueAsString(playload);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Failed to serialize create user playload", e);
         }
