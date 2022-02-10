@@ -23,6 +23,7 @@
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <!-- https://mvnrepository.com/artifact/org.wildfly.plugins/wildfly-maven-plugin -->
         <maven-wildfly-plugin.version>2.0.2.Final</maven-wildfly-plugin.version>
+        <junit.version>4.13.2</junit.version>
     </properties>
 
     <dependencies>
@@ -43,6 +44,12 @@
             <artifactId>keycloak-services</artifactId>
             <version>${keycloak.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
