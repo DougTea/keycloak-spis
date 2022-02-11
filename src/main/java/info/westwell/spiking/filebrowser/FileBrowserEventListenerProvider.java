@@ -3,6 +3,7 @@ package info.westwell.spiking.filebrowser;
 import org.jboss.logging.Logger;
 import org.keycloak.events.Event;
 import org.keycloak.events.EventListenerProvider;
+import org.keycloak.events.EventType;
 import org.keycloak.events.admin.AdminEvent;
 import org.keycloak.events.admin.ResourceType;
 import org.keycloak.models.KeycloakSession;
@@ -27,7 +28,11 @@ public class FileBrowserEventListenerProvider implements EventListenerProvider {
 
     @Override
     public void onEvent(Event event) {
-        // No operators on event
+        if (EventType.REGISTER.equals(event.getType())) {
+            UserModel user = this.session.users().getUserById(this.session.realms().getRealm(event.getRealmId()),
+                    event.getUserId());
+            createUserInFileBrowser(user.getUsername());
+        }
     }
 
     @Override
