@@ -28,7 +28,7 @@ public class FileBrowserEventListenerProvider implements EventListenerProvider {
 
     @Override
     public void onEvent(Event event) {
-        if (EventType.REGISTER.equals(event.getType())) {
+        if (EventType.REGISTER.equals(event.getType())||EventType.VERIFY_EMAIL.equals(event.getType())) {
             UserModel user = this.session.users().getUserById(this.session.realms().getRealm(event.getRealmId()),
                     event.getUserId());
             createUserInFileBrowser(user.getUsername());
