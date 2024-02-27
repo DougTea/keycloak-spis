@@ -16,6 +16,11 @@ public class AccessKeyCredentialModel extends CredentialModel{
         this.accessKey = accessKey;
         this.setType(TYPE);
         this.setCreatedDate(Time.currentTimeMillis());
+        try {
+            setSecretData(JsonSerialization.writeValueAsString(accessKey));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public AccessKey getAccessKey() {
@@ -28,19 +33,18 @@ public class AccessKeyCredentialModel extends CredentialModel{
 
     public static AccessKeyCredentialModel createFromCredentialModel(CredentialModel model) {
         try {
-            AccessKey credentialData = JsonSerialization.readValue(model.getSecretData(), AccessKey.class);
-
-            AccessKeyCredentialModel accessKeyCredentialModel = new AccessKeyCredentialModel(credentialData);
+            AccessKey accessKey = JsonSerialization.readValue(model.getSecretData(), AccessKey.class);
+            AccessKeyCredentialModel accessKeyCredentialModel = new AccessKeyCredentialModel(accessKey);
             accessKeyCredentialModel.setUserLabel(model.getUserLabel());
-            accessKeyCredentialModel.setCreatedDate(model.getCreatedDate());
-            accessKeyCredentialModel.setType(AccessKeyCredentialModel.TYPE);
             accessKeyCredentialModel.setId(model.getId());
-            accessKeyCredentialModel.setSecretData(model.getSecretData());
-            accessKeyCredentialModel.setCredentialData(model.getCredentialData());
             return accessKeyCredentialModel;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String getCredentialData() {
+        return "credential";
     }
 
 }

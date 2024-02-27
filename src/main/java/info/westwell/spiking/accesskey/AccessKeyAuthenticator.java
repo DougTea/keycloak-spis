@@ -31,20 +31,27 @@ public class AccessKeyAuthenticator implements Authenticator, CredentialValidato
 
     @Override
     public void authenticate(AuthenticationFlowContext context) {
-        String inputeAccessKeyStr = retrieveAccessKey(context);
-        if (inputeAccessKeyStr != null) {
-            UserCredentialModel input = new UserCredentialModel(
-                    getCredentialProvider(context.getSession())
-                            .getDefaultCredential(
-                                    context.getSession(),
-                                    context.getRealm(),
-                                    context.getUser())
-                            .getId(),
-                    getType(context.getSession()), inputeAccessKeyStr);
-            if (getCredentialProvider(context.getSession())
-                    .isValid(context.getRealm(), context.getUser(), input)) {
-                    context.success();
-                    return;
+        String passwordInput = retrievePassword(context);
+        if (passwordInput != null && !passwordInput.equals("")) {
+            boolean valid = context.getUser().credentialManager().isValid(UserCredentialModel.password(passwordInput));
+            if (!valid) {
+                String credentialID = getCredentialProvider(context.getSession())
+                        .getDefaultCredential(
+                                context.getSession(),
+                                context.getRealm(),
+                                context.getUser())
+                        .getId();
+                UserCredentialModel input = new UserCredentialModel(
+                        credentialID,
+                        getType(context.getSession()), passwordInput);
+                if (getCredentialProvider(context.getSession())
+                        .isValid(context.getRealm(), context.getUser(), input)) {
+                    valid = true;
+                }
+            }
+            if (valid) {
+                context.success();
+                return;
             }
         }
         if (context.getUser() != null) {
@@ -52,8 +59,8 @@ public class AccessKeyAuthenticator implements Authenticator, CredentialValidato
         }
         context.getEvent().error(Errors.INVALID_USER_CREDENTIALS);
         Response challengeResponse = errorResponse(Response.Status.UNAUTHORIZED.getStatusCode(), "invalid_grant",
-                "Invalid user credentials");
-        context.failure(AuthenticationFlowError.INVALID_USER, challengeResponse);
+                "Invalid user access key");
+        context.failure(AuthenticationFlowError.INVALID_CREDENTIALS, challengeResponse);
     }
 
     public Response errorResponse(int status, String error, String errorDescription) {
@@ -79,7 +86,7 @@ public class AccessKeyAuthenticator implements Authenticator, CredentialValidato
     public void setRequiredActions(KeycloakSession session, RealmModel realm, UserModel user) {
     }
 
-    protected String retrieveAccessKey(AuthenticationFlowContext context) {
+    protected String retrievePassword(AuthenticationFlowContext context) {
         MultivaluedMap<String, String> inputData = context.getHttpRequest().getDecodedFormParameters();
         return inputData.getFirst(CredentialRepresentation.PASSWORD);
     }
